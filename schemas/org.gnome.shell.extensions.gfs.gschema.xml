@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.gfs" path="/org/gnome/shell/extensions/gfs/">
+    <key name="shortcut-1-keybind" type="as">
+      <default><![CDATA[['<Super>1']]]></default>
+      <summary>First shortcut keybind</summary>
+    </key>
+    <key name="shortcut-1-wm-class" type="s">
+      <default>"com.mitchellh.ghostty"</default>
+      <summary>First shortcut application wmclass</summary>
+    </key>
+    <key name="shortcut-2-keybind" type="as">
+      <default><![CDATA[['<Super>2']]]></default>
+      <summary>Second shortcut keybind</summary>
+    </key>
+    <key name="shortcut-2-wm-class" type="s">
+      <default>"google-chrome"</default>
+      <summary>Second shortcut application wmclass</summary>
+    </key>
+    <key name="shortcut-3-keybind" type="as">
+      <default><![CDATA[['<Super>3']]]></default>
+      <summary>Third shortcut keybind</summary>
+    </key>
+    <key name="shortcut-3-wm-class" type="s">
+      <default>"org.gnome.Settings"</default>
+      <summary>Third shortcut application wmclass</summary>
+    </key>
+    <key name="shortcut-last-window-current-application" type="as">
+      <default><![CDATA[['<Super>j']]]></default>
+      <summary>Open the last window from the current opened application</summary>
+    </key>
+    <key name="shortcut-last-window-except-current-application" type="as">
+      <default><![CDATA[['<Super>k']]]></default>
+      <summary>Open the last window not from the current opened application</summary>
+    </key>
+    <key name="shortcut-last-window-non-shortcut" type="as">
+      <default><![CDATA[['<Super>comma']]]></default>
+      <summary>Open the last window not from any listed shortcut applications</summary>
+    </key>
+  </schema>
+</schemalist>

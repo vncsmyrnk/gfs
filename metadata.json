@@ -1,0 +1,10 @@
+{
+  "name": "gfs",
+  "description": "Fast switch between windows using keybindings",
+  "uuid": "gfs@vncsmyrnk.dev",
+  "shell-version": [
+    "50",
+    "51"
+  ],
+  "settings-schema": "org.gnome.shell.extensions.gfs"
+}
