@@ -54,7 +54,10 @@ export default class gfs extends Extension {
     const lastWmClassWindow = (windows: Meta.Window[]): Meta.Window | undefined => windows.find(w => w.get_wm_class() == wmClass);
     return (_d: Meta.Display, _w: Meta.Window, _e: Clutter.Event, _b: Meta.KeyBinding): void => {
       if (!this._currentlyOpened(wmClass)) {
-        this._raise(lastWmClassWindow) || this._run(wmClass);
+        const raised = this._raise(lastWmClassWindow);
+        if (!raised) {
+          this._run(wmClass);
+        }
       }
     };
   }
