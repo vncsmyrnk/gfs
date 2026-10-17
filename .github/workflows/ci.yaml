@@ -8,7 +8,7 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
 
       - run: sudo apt-get update && sudo apt-get install -y libglib2.0-dev
@@ -26,3 +26,50 @@ jobs:
 
       - name: Run Distcheck
         run: make distcheck
+
+  ci-pkgbuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Build Arch Package
+        uses: edlanglois/pkgbuild-action@v1
+        with:
+          namcap: true
+          pkgdir: ./arch
+
+  cd-pkgbuild-check:
+    runs-on: ubuntu-latest
+    outputs:
+      pkgbuild-changed: ${{ steps.filter.outputs.pkgbuild-changed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Check for PKGBUILD version change
+        uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          filters: |
+            pkgbuild-changed:
+              - 'arch/PKGBUILD'
+
+  cd-pkgbuild:
+    needs: [ci-pkgbuild, cd-pkgbuild-check, ci]
+    if: ${{ needs.cd-pkgbuild-check.outputs.pkgbuild-changed == 'true' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[skip-cd]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Publish AUR package
+        uses: KSXGitHub/github-actions-deploy-aur@v4.1.3
+        with:
+          pkgname: gnome-shell-extension-gfs-git
+          pkgbuild: ./arch/PKGBUILD
+          commit_username: ${{ secrets.AUR_USERNAME }}
+          commit_email: ${{ secrets.AUR_EMAIL }}
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_message: "Update AUR package"
+          ssh_keyscan_types: rsa,ecdsa,ed25519
