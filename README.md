@@ -10,6 +10,12 @@ autoreconf -fi
 make install
 ```
 
+Or using your favorite AUR helper:
+
+```sh
+paru -S gnome-shell-extension-gfs-git
+```
+
 ## Customization
 
 ```sh
