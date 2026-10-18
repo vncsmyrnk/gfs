@@ -72,6 +72,11 @@ export default class gfs extends Extension {
     const shortcut3WmClass = this._gsettings.get_string("shortcut-3-wm-class");
     const allShortcutWmClasses = [shortcut1WmClass, shortcut2WmClass, shortcut3WmClass];
 
+    const gnomeShellKeybindingsSettings = this.getSettings("org.gnome.shell.keybindings");
+    gnomeShellKeybindingsSettings.set_strv("switch-to-application-1", null);
+    gnomeShellKeybindingsSettings.set_strv("switch-to-application-2", null);
+    gnomeShellKeybindingsSettings.set_strv("switch-to-application-3", null);
+
     Main.wm.addKeybinding("shortcut-1-keybind",
       this._gsettings, Meta.KeyBindingFlags.NONE, Shell.ActionMode.NORMAL,
       gfs._keybindRunOrRaise(shortcut1WmClass)

@@ -3,6 +3,8 @@
 
 GNOME extension to fast switch between windows using keybindings.
 
+This extension overwrites the default `switch-to-application-N` keybindings. The default GNOME functionalities brings up all windows of the application when this keybind is triggered. This extension brings up _only_ the last focused window.
+
 ## Install
 
 ```sh
