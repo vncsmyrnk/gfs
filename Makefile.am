@@ -3,7 +3,7 @@ EXTRA_DIST = extension.ts lib/picker.ts metadata.json tsconfig.json package.json
 
 all-local: extension.js schemas/gschemas.compiled
 
-dist_extension_DATA = extension.js metadata.json
+nobase_dist_extension_DATA = extension.js metadata.json
 CLEANFILES = extension.js
 
 extension.js: extension.ts lib/picker.ts tsconfig.json
@@ -16,10 +16,11 @@ gsettings_SCHEMAS = schemas/org.gnome.shell.extensions.gfs.gschema.xml
 schema_XML = schemas/org.gnome.shell.extensions.gfs.gschema.xml
 EXTRA_DIST += $(schema_XML)
 
-CLEANFILES += schemas/gschemas.compiled
-
 schemas/gschemas.compiled: $(gsettings_SCHEMAS)
 	$(AM_V_GEN)$(MKDIR_P) schemas && \
 		glib-compile-schemas schemas
+
+nobase_dist_extension_DATA += schemas/gschemas.compiled
+CLEANFILES += schemas/gschemas.compiled
 
 @GSETTINGS_RULES@
