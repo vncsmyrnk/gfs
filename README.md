@@ -34,3 +34,11 @@ Or using your favorite AUR helper:
 ```sh
 paru -S gnome-shell-extension-gfs-git
 ```
+
+### After install
+
+Remember to enable the extension and log out and in again, so it is properly initialized.
+
+```sh
+gnome-extensions enable gfs@vncsmyrnk.dev
+```
