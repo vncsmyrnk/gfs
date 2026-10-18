@@ -22,13 +22,20 @@ import Shell from 'gi://Shell';
 import Clutter from 'gi://Clutter';
 import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+import {
+  Picker,
+  buildLastShortcutWindowPicker,
+  buildLastNonShortcutWindowPicker,
+  pickLastWindowCurrentApplication,
+  pickLastWindowExceptCurrentApplication
+} from './lib/picker';
 
 declare const global: Shell.Global;
 
 export default class gfs extends Extension {
   _gsettings?: Gio.Settings
 
-  _raise(picker: (windows: Meta.Window[]) => Meta.Window | undefined): boolean {
+  static _raise(picker: Picker): boolean {
     const windows = global.display.get_tab_list(Meta.TabList.NORMAL_ALL, null);
     const picked = picker(windows);
     if (picked) {
@@ -38,65 +45,22 @@ export default class gfs extends Extension {
     return false;
   }
 
-  _run(wmClass: string) {
+  static _run(wmClass: string): void {
     global.get_app_system().lookup_desktop_wmclass(wmClass).activate();
   }
 
-  _currentlyOpened(wmClass: string): boolean {
-    const windows = global.display.get_tab_list(Meta.TabList.NORMAL_ALL, null);
-    if (windows.length == 0) {
-      return false;
-    }
-    return windows[0].get_wm_class() == wmClass;
+
+  static _keybindRaise(picker: Picker): Meta.KeyHandlerFunc {
+    return (_d: Meta.Display, _w: Meta.Window, _e: Clutter.Event, _b: Meta.KeyBinding): void => {
+      this._raise(picker);
+    };
   }
 
-  _keybindShortcut(wmClass: string): Meta.KeyHandlerFunc {
-    const lastWmClassWindow = (windows: Meta.Window[]): Meta.Window | undefined => windows.find(w => w.get_wm_class() == wmClass);
+  static _keybindRunOrRaise(wmClass: string): Meta.KeyHandlerFunc {
     return (_d: Meta.Display, _w: Meta.Window, _e: Clutter.Event, _b: Meta.KeyBinding): void => {
-      if (!this._currentlyOpened(wmClass)) {
-        const raised = this._raise(lastWmClassWindow);
-        if (!raised) {
-          this._run(wmClass);
-        }
+      if (!this._raise(buildLastShortcutWindowPicker(wmClass))) {
+        this._run(wmClass);
       }
-    };
-  }
-
-  _keybindLastWindowCurrentApplication(): Meta.KeyHandlerFunc {
-    return (_d: Meta.Display, _w: Meta.Window, _e: Clutter.Event, _b: Meta.KeyBinding): void => {
-      this._raise((windows: Meta.Window[]): Meta.Window | undefined => {
-        if (windows.length < 1) {
-          return;
-        }
-        const currentWindowWmClass = windows[0].get_wm_class();
-        for (let i = 1; i < windows.length; i++) {
-          if (windows[i].get_wm_class() == currentWindowWmClass) return windows[i];
-        }
-      })
-    };
-  }
-
-  _keybindLastWindowExceptCurrentApplication(): Meta.KeyHandlerFunc {
-    return (_d: Meta.Display, _w: Meta.Window, _e: Clutter.Event, _b: Meta.KeyBinding): void => {
-      this._raise((windows: Meta.Window[]): Meta.Window | undefined => {
-        if (windows.length < 1) {
-          return;
-        }
-        const currentWindowWmClass = windows[0].get_wm_class();
-        for (let i = 1; i < windows.length; i++) {
-          if (windows[i].get_wm_class() != currentWindowWmClass) return windows[i];
-        }
-      })
-    };
-  }
-
-  _keybindLastNonShortcutWindow(shortcutWmClasses: string[]): Meta.KeyHandlerFunc {
-    return (_d: Meta.Display, _w: Meta.Window, _e: Clutter.Event, _b: Meta.KeyBinding): void => {
-      this._raise((windows: Meta.Window[]): Meta.Window | undefined => {
-        for (let i = 0; i < windows.length; i++) {
-          if (!shortcutWmClasses.includes(windows[i].get_wm_class() ?? "")) return windows[i];
-        }
-      });
     };
   }
 
@@ -106,26 +70,33 @@ export default class gfs extends Extension {
     const shortcut1WmClass = this._gsettings.get_string("shortcut-1-wm-class");
     const shortcut2WmClass = this._gsettings.get_string("shortcut-2-wm-class");
     const shortcut3WmClass = this._gsettings.get_string("shortcut-3-wm-class");
+    const allShortcutWmClasses = [shortcut1WmClass, shortcut2WmClass, shortcut3WmClass];
 
     Main.wm.addKeybinding("shortcut-1-keybind",
       this._gsettings, Meta.KeyBindingFlags.NONE, Shell.ActionMode.NORMAL,
-      this._keybindShortcut(shortcut1WmClass));
+      gfs._keybindRunOrRaise(shortcut1WmClass)
+    );
     Main.wm.addKeybinding("shortcut-2-keybind",
       this._gsettings, Meta.KeyBindingFlags.NONE, Shell.ActionMode.NORMAL,
-      this._keybindShortcut(shortcut2WmClass));
+      gfs._keybindRunOrRaise(shortcut2WmClass)
+    );
     Main.wm.addKeybinding("shortcut-3-keybind",
       this._gsettings, Meta.KeyBindingFlags.NONE, Shell.ActionMode.NORMAL,
-      this._keybindShortcut(shortcut3WmClass));
+      gfs._keybindRunOrRaise(shortcut3WmClass)
+    );
 
     Main.wm.addKeybinding("shortcut-last-window-current-application",
       this._gsettings, Meta.KeyBindingFlags.NONE, Shell.ActionMode.NORMAL,
-      this._keybindLastWindowCurrentApplication());
+      gfs._keybindRaise(pickLastWindowCurrentApplication)
+    );
     Main.wm.addKeybinding("shortcut-last-window-except-current-application",
       this._gsettings, Meta.KeyBindingFlags.NONE, Shell.ActionMode.NORMAL,
-      this._keybindLastWindowExceptCurrentApplication());
+      gfs._keybindRaise(pickLastWindowExceptCurrentApplication)
+    );
     Main.wm.addKeybinding("shortcut-last-window-non-shortcut",
       this._gsettings, Meta.KeyBindingFlags.NONE, Shell.ActionMode.NORMAL,
-      this._keybindLastNonShortcutWindow([shortcut1WmClass, shortcut2WmClass, shortcut3WmClass]));
+      gfs._keybindRaise(buildLastNonShortcutWindowPicker(allShortcutWmClasses))
+    );
   }
 
   disable() {
