@@ -12,6 +12,13 @@ This extension overwrites the default `switch-to-application-N` keybindings. The
 | `<Super>k` | Raise the last seen window NOT of the currently focused application (e.i. alt+tab) |
 | `<Super>,` | Raise the last seen window NOT of the predefined applications 1, 2 or 3 |
 
+## Customization
+
+```sh
+# Sets <Super>1 shortcut to run or raise ghostty
+gsettings set org.gnome.shell.extensions.gfs shortcut-1-wm-class "com.mitchellh.ghostty"
+```
+
 ## Install
 
 ```sh
@@ -24,11 +31,4 @@ Or using your favorite AUR helper:
 
 ```sh
 paru -S gnome-shell-extension-gfs-git
-```
-
-## Customization
-
-```sh
-# Sets <Super>1 shortcut to run or raise ghostty
-gsettings set org.gnome.shell.extensions.gfs shortcut-1-wm-class "com.mitchellh.ghostty"
 ```
