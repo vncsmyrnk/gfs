@@ -4,7 +4,7 @@ EXTRA_DIST = extension.ts lib/picker.ts metadata.json tsconfig.json package.json
 all-local: extension.js schemas/gschemas.compiled
 
 nobase_dist_extension_DATA = extension.js metadata.json
-CLEANFILES = extension.js
+CLEANFILES = extension.js lib/picker.js
 
 extension.js: extension.ts lib/picker.ts tsconfig.json
 	$(AM_V_GEN) $(NPM) install --silent
