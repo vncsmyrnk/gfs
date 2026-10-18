@@ -9,9 +9,14 @@ package.json
 *.valid
 
 *.tar.gz
+*.tar.zst
 
 *.la
 *.lo
+
+arch/gfs
+arch/pkg
+arch/src
 
 # http://www.gnu.org/software/automake
 
