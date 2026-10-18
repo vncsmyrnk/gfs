@@ -1,4 +1,4 @@
-AC_INIT([gfs], [0.1.1])
+AC_INIT([gfs], [0.1.2])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
 
 AC_PATH_PROG([NPM], [npm], [no])
