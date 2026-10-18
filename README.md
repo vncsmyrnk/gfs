@@ -17,6 +17,8 @@ This extension overwrites the default `switch-to-application-N` keybindings. The
 ```sh
 # Sets <Super>1 shortcut to run or raise ghostty
 gsettings set org.gnome.shell.extensions.gfs shortcut-1-wm-class "com.mitchellh.ghostty"
+# Sets ghosty to run or raise on <Super>t
+gsettings set org.gnome.shell.extensions.gfs shortcut-1-keybind "['<Super>t']"
 ```
 
 ## Install
