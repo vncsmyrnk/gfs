@@ -34,3 +34,19 @@ export const buildLastNonShortcutWindowPicker: (shortcutWmClasses: string[]) => 
     }
   }
 };
+
+export const buildLastNthWindowCurrentApplicationPicker: (n: number) => Picker = (n) => {
+  return (windows) => {
+    if (windows.length < 1) {
+      return;
+    }
+    const currentWindowWmClass = windows[0].get_wm_class();
+    let currentApplicationWindowIndexes = [];
+    for (let i = 1; i < windows.length; i++) {
+      if (windows[i].get_wm_class() == currentWindowWmClass) {
+        currentApplicationWindowIndexes.push(i);
+      }
+    }
+    return windows[currentApplicationWindowIndexes[n % currentApplicationWindowIndexes.length]];
+  }
+};

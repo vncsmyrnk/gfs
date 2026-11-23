@@ -25,6 +25,10 @@
       <default>"org.gnome.Settings"</default>
       <summary>Third shortcut application wmclass</summary>
     </key>
+    <key name="shortcut-test-keybind" type="as">
+      <default><![CDATA[['<Super>4']]]></default>
+      <summary>Test shortcut keybind</summary>
+    </key>
     <key name="shortcut-last-window-current-application" type="as">
       <default><![CDATA[['<Super>j']]]></default>
       <summary>Open the last window from the current opened application</summary>
